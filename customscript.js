@@ -8,6 +8,9 @@ var fontSize = 32;
 window.onload = function(){
     generateBoard();
 };
+function updateMoves(){
+    document.getElementById("moves").innerHTML = "Moves: " + moves.toString();
+}
 function scramble(times){
     while(times > 0){
         var x = Math.floor(Math.random() * size);
@@ -19,7 +22,6 @@ function scramble(times){
                 count += 1;
             }
         }
-        console.log(count);
         if(count > 0){
             tileClicked([x, y]);
         }
@@ -27,6 +29,7 @@ function scramble(times){
     }
     document.getElementById("winText").innerHTML = "You may begin.";
     moves = 0;
+    updateMoves();
 }
 function changeMostDigits(){
     var lastNum = board[size - 1][size - 2];
@@ -37,12 +40,11 @@ function changeSize(){
     removeBoard();
     size = document.getElementById("size").value;
     changeBoardSize();
+    changeSolvedBoard();
     generateBoard();
     var tiles = document.getElementsByClassName("tile");
     changeMostDigits();
     for(var i = 0; i < size * size; i++){
-        console.log(i);
-        console.log(tiles[i]);
         tiles[i].style.fontSize = fontSize.toString() + "px";
         tiles[i].style.width = (mostDigits * fontSize + 5).toString() + "px";
         tiles[i].style.height = (mostDigits * fontSize  + 5).toString() + "px";
@@ -59,12 +61,23 @@ function changeBoardSize(){
         var newBoardRow = [];
         for(var j = (i * size + 1); j < (i + 1) * size + 1; j++){
             newBoardRow.push(j.toString());
-            console.log("j");
         }
         newBoard.push(newBoardRow);
     }
     newBoard[size - 1][size - 1] = ":)";
     board = newBoard;
+    
+}
+function changeSolvedBoard(){
+    newBoard = [];
+    for(var i = 0; i < size; i++){
+        var newBoardRow = [];
+        for(var j = (i * size + 1); j < (i + 1) * size + 1; j++){
+            newBoardRow.push(j.toString());
+        }
+        newBoard.push(newBoardRow);
+    }
+    newBoard[size - 1][size - 1] = ":)";
     solvedBoard = newBoard;
 }
 function removeBoard(){
@@ -131,6 +144,8 @@ function tileClicked(location){
         generateBoard();
         checkWin();
     }
+    updateMoves();
+    console.log(solvedBoard.toString());
 }
 function tileNextToSpace(location){
     fourDirections = ["No","No","No","No"];
@@ -189,5 +204,6 @@ function checkWin(){
     if(board.toString() == solvedBoard.toString()){
         document.getElementById("winText").innerHTML = "You did it in " + moves.toString() + " moves!";
         moves = 0;
+        updateMoves();
     }
 }
